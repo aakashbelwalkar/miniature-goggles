@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineBook - Movie & Event Tickets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e50914;
+            --secondary: #1e90ff;
+            --dark: #141414;
+            --light: #f4f4f4;
+            --gray: #757575;
+            --success: #28a745;
+        }
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+       
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+       
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+       
+        /* Header */
+        header {
+            background-color: rgba(20, 20, 20, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+       
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+       
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+       
+        .logo i {
+            margin-right: 10px;
+        }
+       
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+       
+        .nav-links li {
+            margin-left: 25px;
+        }
+       
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+       
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+       
+        .mobile-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+       
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1489599809519-d5c4cac2d0ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding-top: 80px;
+        }
+       
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+       
+        .hero-content p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+       
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+       
+        .btn:hover {
+            background-color: #ff0a16;
+            transform: translateY(-2px);
+        }
+       
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+       
+        .btn-secondary:hover {
+            background-color: #3ca0ff;
+        }
+       
+        /* Event Categories */
+        .categories {
+            padding: 60px 0;
+        }
+       
+        .categories-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+       
+        .category-btn {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 18px;
+            margin: 0 15px;
+            padding: 10px 0;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+       
+        .category-btn.active {
+            color: var(--primary);
+        }
+       
+        .category-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+        }
+       
+        .category-section {
+            display: none;
+        }
+       
+        .category-section.active {
+            display: block;
+        }
+       
+        /* Movies/Events Section */
+        .section-title {
+            font-size: 32px;
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+       
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+       
+        .event-card {
+            background-color: #222;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+       
+        .event-card:hover {
+            transform: translateY(-10px);
+        }
+       
+        .event-poster {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+       
+        .event-info {
+            padding: 15px;
+        }
+       
+        .event-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+       
+        .event-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 14px;
+        }
+       
+        .event-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+       
+        /* Offers Section */
+        .offers {
+            background-color: #111;
+            padding: 60px 0;
+        }
+       
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+       
+        .offer-card {
+            background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+       
+        .offer-card:hover {
+            transform: translateY(-5px);
+        }
+       
+        .offer-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+       
+        .offer-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+       
+        .offer-code {
+            background-color: #333;
+            padding: 8px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 10px 0;
+            font-family: monospace;
+            font-weight: bold;
+        }
+       
+        /* Unique Features Section */
+        .features {
+            padding: 60px 0;
+        }
+       
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+       
+        .feature-card {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+       
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+       
+        .feature-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+       
+        .feature-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+       
+        /* Feedback Section */
+        .feedback {
+            background-color: #111;
+            padding: 60px 0;
+        }
+       
+        .feedback-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+        }
+       
+        .feedback-form h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+       
+        .rating {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-direction: row-reverse;
+        }
+       
+        .rating input {
+            display: none;
+        }
+       
+        .rating label {
+            font-size: 30px;
+            color: #444;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+       
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: gold;
+        }
+       
+        /* Booking Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow: auto;
+        }
+       
+        .modal-content {
+            background-color: #222;
+            margin: 5% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            position: relative;
+        }
+       
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+       
+        .booking-form h3 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+       
+        .form-group {
+            margin-bottom: 20px;
+        }
+       
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+       
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            font-size: 16px;
+        }
+       
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+       
+        .form-row .form-group {
+            flex: 1;
+        }
+       
+        .seats-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+        }
+       
+        .seat {
+            width: 30px;
+            height: 30px;
+            background-color: #444;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+       
+        .seat.selected {
+            background-color: var(--primary);
+        }
+       
+        .seat.occupied {
+            background-color: #777;
+            cursor: not-allowed;
+        }
+       
+        .seat.vip {
+            background-color: gold;
+            color: #000;
+        }
+       
+        .screen {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+       
+        .booking-summary {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+       
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+       
+        .summary-total {
+            font-size: 20px;
+            font-weight: bold;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+       
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+       
+        .payment-method {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+       
+        .payment-method.selected {
+            border-color: var(--primary);
+            background-color: rgba(229, 9, 20, 0.1);
+        }
+       
+        .payment-method i {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+       
+        .upi-options {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+        }
+       
+        .upi-options.active {
+            display: block;
+        }
+       
+        .upi-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+       
+        .upi-option:hover {
+            background-color: #333;
+        }
+       
+        .upi-option.selected {
+            background-color: rgba(229, 9, 20, 0.2);
+        }
+       
+        .upi-option img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+       
+        /* Receipt Modal */
+        .receipt {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+       
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 15px;
+        }
+       
+        .receipt-details {
+            margin-bottom: 20px;
+        }
+       
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+       
+        .receipt-total {
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+       
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+       
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+       
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 40px 0;
+            text-align: center;
+        }
+       
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+       
+        .footer-links li {
+            margin: 0 15px;
+        }
+       
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+        }
+       
+        .footer-links a:hover {
+            color: var(--light);
+        }
+       
+        .copyright {
+            color: var(--gray);
+            font-size: 14px;
+        }
+       
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            display: none;
+        }
+       
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--dark);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            }
+           
+            .nav-links.active {
+                display: flex;
+            }
+           
+            .nav-links li {
+                margin: 10px 0;
+            }
+           
+            .mobile-menu {
+                display: block;
+            }
+           
+            .hero-content h1 {
+                font-size: 36px;
+            }
+           
+            .events-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+           
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+           
+            .seats-container {
+                grid-template-columns: repeat(5, 1fr);
+            }
+           
+            .payment-methods {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo"><i class="fas fa-ticket-alt"></i>CineBook</a>
+                <ul class="nav-links">
+                    <li><a href="#" class="category-link" data-category="movies">Movies</a></li>
+                    <li><a href="#" class="category-link" data-category="concerts">Concerts</a></li>
+                    <li><a href="#" class="category-link" data-category="sports">Sports</a></li>
+                    <li><a href="#" class="category-link" data-category="theater">Theater</a></li>
+                    <li><a href="#offers">Offers</a></li>
+                    <li><a href="#feedback">Feedback</a></li>
+                    <li><a href="#" class="btn">Sign In</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Book Movies & Events in Seconds</h1>
+                <p>Discover the latest movies, concerts, sports events, and theater shows. Book your tickets with exclusive features like seat preview, group booking, and instant refunds.</p>
+                <a href="#events" class="btn">Explore Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Categories -->
+    <section class="categories" id="events">
+        <div class="container">
+            <h2 class="section-title">Events & Shows</h2>
+            <div class="categories-nav">
+                <button class="category-btn active" data-category="movies">Movies</button>
+                <button class="category-btn" data-category="concerts">Concerts</button>
+                <button class="category-btn" data-category="sports">Sports</button>
+                <button class="category-btn" data-category="theater">Theater</button>
+            </div>
+
+            <!-- Movies Category -->
+            <div class="category-section active" id="movies-section">
+                <div class="events-grid" id="movies-grid">
+                    <!-- Movie cards will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Concerts Category -->
+            <div class="category-section" id="concerts-section">
+                <div class="events-grid" id="concerts-grid">
+                    <!-- Concert cards will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Sports Category -->
+            <div class="category-section" id="sports-section">
+                <div class="events-grid" id="sports-grid">
+                    <!-- Sports event cards will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Theater Category -->
+            <div class="category-section" id="theater-section">
+                <div class="events-grid" id="theater-grid">
+                    <!-- Theater event cards will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offers Section -->
+    <section class="offers" id="offers">
+        <div class="container">
+            <h2 class="section-title">Special Offers</h2>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <div class="offer-icon"><i class="fas fa-percentage"></i></div>
+                    <h3 class="offer-title">First Booking Discount</h3>
+                    <p>Get 25% off on your first booking with us</p>
+                    <div class="offer-code">WELCOME25</div>
+                    <p>Valid for new users only</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon"><i class="fas fa-users"></i></div>
+                    <h3 class="offer-title">Group Discount</h3>
+                    <p>Book for 4+ people and get 15% off</p>
+                    <div class="offer-code">GROUP15</div>
+                    <p>Applicable on all events</p>
+                </div>
+                <div class="offer-card">
+                    <div class="offer-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3 class="offer-title">App Exclusive</h3>
+                    <p>Get additional 10% off when booking through our app</p>
+                    <div class="offer-code">APP10</div>
+                    <p>Download our app now</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Unique Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Unique Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-couch"></i></div>
+                    <h3 class="feature-title">Virtual Seat Preview</h3>
+                    <p>See exactly what your view will be like before booking with our 360° seat preview.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-friends"></i></div>
+                    <h3 class="feature-title">Group Booking Made Easy</h3>
+                    <p>Book multiple tickets together with our smart group seating algorithm.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                    <h3 class="feature-title">Instant Refunds</h3>
+                    <p>Change of plans? Get instant refunds up to 2 hours before the show.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-universal-access"></i></div>
+                    <h3 class="feature-title">Audio Descriptions</h3>
+                    <p>Accessibility features including audio descriptions and closed captions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <h3 class="feature-title">Split Payment</h3>
+                    <p>Split ticket costs with friends directly through the app.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-award"></i></div>
+                    <h3 class="feature-title">Digital Collectibles</h3>
+                    <p>Get exclusive digital collectibles with each ticket purchase.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section class="feedback" id="feedback">
+        <div class="container">
+            <h2 class="section-title">We Value Your Feedback</h2>
+            <div class="feedback-form">
+                <h3>How was your experience?</h3>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="userName">Your Name</label>
+                        <input type="text" id="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate Your Experience</label>
+                        <div class="rating">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackMessage">Your Feedback</label>
+                        <textarea id="feedbackMessage" rows="5" placeholder="Tell us about your experience..."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Submit Feedback</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="booking-form">
+                <h3>Book Your Tickets</h3>
+                <div class="form-group">
+                    <label for="eventTitle">Event</label>
+                    <input type="text" id="eventTitle" readonly>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="showDate">Date</label>
+                        <input type="date" id="showDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="showtime">Showtime</label>
+                        <select id="showtime">
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="1:30 PM">1:30 PM</option>
+                            <option value="4:45 PM">4:45 PM</option>
+                            <option value="8:00 PM">8:00 PM</option>
+                            <option value="10:30 PM">10:30 PM</option>
+                        </select>
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label>Select Seats</label>
+                    <div class="screen">SCREEN</div>
+                    <div class="seats-container" id="seatsContainer">
+                        <!-- Seats will be generated by JavaScript -->
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label for="ticketCount">Number of Tickets</label>
+                    <input type="number" id="ticketCount" min="1" max="10" value="1">
+                </div>
+               
+                <div class="booking-summary">
+                    <h4>Booking Summary</h4>
+                    <div class="summary-item">
+                        <span>Tickets:</span>
+                        <span id="ticketPrice">₹0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Service Fee:</span>
+                        <span id="serviceFee">₹35.00</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>Total:</span>
+                        <span id="totalPrice">₹0.00</span>
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label>Select Payment Method</label>
+                    <div class="payment-methods">
+                        <div class="payment-method" data-method="credit">
+                            <i class="far fa-credit-card"></i>
+                            <div>Credit Card</div>
+                        </div>
+                        <div class="payment-method" data-method="debit">
+                            <i class="fas fa-credit-card"></i>
+                            <div>Debit Card</div>
+                        </div>
+                        <div class="payment-method" data-method="upi">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div>UPI</div>
+                        </div>
+                        <div class="payment-method" data-method="wallet">
+                            <i class="fas fa-wallet"></i>
+                            <div>Digital Wallet</div>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="upi-options" id="upiOptions">
+                    <h4>Select UPI App</h4>
+                    <div class="upi-option" data-upi="phonepe">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/PhonePe_Logo.svg/2560px-PhonePe_Logo.svg.png" alt="PhonePe">
+                        <div>PhonePe</div>
+                    </div>
+                    <div class="upi-option" data-upi="gpay">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" alt="Google Pay">
+                        <div>Google Pay</div>
+                    </div>
+                    <div class="upi-option" data-upi="paytm">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/640px-Paytm_logo.png" alt="Paytm">
+                        <div>Paytm</div>
+                    </div>
+                    <div class="upi-option" data-upi="other">
+                        <i class="fas fa-qrcode" style="font-size: 40px; margin-right: 15px;"></i>
+                        <div>Other UPI App</div>
+                    </div>
+                </div>
+               
+                <div class="form-group">
+                    <label for="promoCode">Promo Code (Optional)</label>
+                    <input type="text" id="promoCode" placeholder="Enter promo code">
+                </div>
+               
+                <button class="btn" id="confirmBooking">Proceed to Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="booking-form">
+                <h3>Complete Your Payment</h3>
+                <div id="paymentDetails">
+                    <!-- Payment details will be filled based on method -->
+                </div>
+               
+                <div class="booking-summary">
+                    <h4>Payment Summary</h4>
+                    <div class="summary-item">
+                        <span>Event:</span>
+                        <span id="paymentEvent">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Date & Time:</span>
+                        <span id="paymentDateTime">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Seats:</span>
+                        <span id="paymentSeats">-</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>Total:</span>
+                        <span id="paymentTotal">₹0.00</span>
+                    </div>
+                </div>
+               
+                <button class="btn" id="completePayment">Complete Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="receipt">
+                <div class="receipt-header">
+                    <h2><i class="fas fa-ticket-alt"></i> CineBook</h2>
+                    <p>Booking Confirmation</p>
+                </div>
+                <div class="receipt-details">
+                    <div class="receipt-item">
+                        <span>Booking ID:</span>
+                        <span id="receiptBookingId">CB123456</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Event:</span>
+                        <span id="receiptEvent">-</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Date & Time:</span>
+                        <span id="receiptDateTime">-</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Venue:</span>
+                        <span id="receiptVenue">PVR Cinemas, Mumbai</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Seats:</span>
+                        <span id="receiptSeats">-</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Ticket Price:</span>
+                        <span id="receiptTicketPrice">₹0.00</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Service Fee:</span>
+                        <span id="receiptServiceFee">₹35.00</span>
+                    </div>
+                    <div class="receipt-item receipt-total">
+                        <span>Total Paid:</span>
+                        <span id="receiptTotal">₹0.00</span>
+                    </div>
+                </div>
+                <div class="qr-code">
+                    <p>Show this QR code at the venue</p>
+                    <div style="background: white; padding: 10px; display: inline-block; border-radius: 8px;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CineBook-Ticket" alt="QR Code">
+                    </div>
+                </div>
+                <div class="receipt-footer">
+                    <p>Thank you for booking with CineBook!</p>
+                    <p>Tickets have been sent to your email</p>
+                    <p>For any queries, contact support@cinebook.com</p>
+                </div>
+                <button class="btn" id="closeReceipt" style="margin-top: 20px; width: 100%;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Booking confirmed! Check your email for tickets.</div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+            <p class="copyright">&copy; 2023 CineBook. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample event data with Indian prices and high-quality images
+        const events = {
+            movies: [
+                { id: 1, title: "The Last Adventure", genre: "Action", duration: "2h 15m", rating: "4.5", price: 250, poster: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" },
+                { id: 2, title: "Eternal Love", genre: "Romance", duration: "1h 55m", rating: "4.2", price: 200, poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2059&q=80" },
+                { id: 3, title: "Space Odyssey", genre: "Sci-Fi", duration: "2h 30m", rating: "4.8", price: 300, poster: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" },
+                { id: 4, title: "Mystery Mansion", genre: "Thriller", duration: "2h 5m", rating: "4.3", price: 220, poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" }
+            ],
+            concerts: [
+                { id: 5, title: "Rock Festival 2023", genre: "Rock", duration: "4h", rating: "4.7", price: 1500, poster: "https://images.unsplash.com/photo-1506157786151-b8491531f063?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" },
+                { id: 6, title: "Jazz Night Live", genre: "Jazz", duration: "3h", rating: "4.4", price: 1200, poster: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" },
+                { id: 7, title: "Pop Sensation Tour", genre: "Pop", duration: "3h 30m", rating: "4.9", price: 2000, poster: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" }
+            ],
+            sports: [
+                { id: 8, title: "Championship Finals", genre: "Basketball", duration: "2h 30m", rating: "4.8", price: 1800, poster: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2090&q=80" },
+                { id: 9, title: "Derby Match", genre: "Soccer", duration: "2h", rating: "4.6", price: 2500, poster: "https://images.unsplash.com/photo-1574629810360-7efbe195ff3d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80" },
+                { id: 10, title: "Tennis Open", genre: "Tennis", duration: "3h", rating: "4.5", price: 2200, poster: "https://images.unsplash.com/photo-1622279457486-68dff87d1be1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80" }
+            ],
+            theater: [
+                { id: 11, title: "Hamlet", genre: "Drama", duration: "2h 45m", rating: "4.7", price: 800, poster: "https://images.unsplash.com/photo-1546636889-eeda54d7eb74?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80" },
+                { id: 12, title: "The Magic Flute", genre: "Opera", duration: "3h 15m", rating: "4.9", price: 1200, poster: "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2076&q=80" },
+                { id: 13, title: "Contemporary Dance", genre: "Dance", duration: "1h 45m", rating: "4.3", price: 600, poster: "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" }
+            ]
+        };
+
+        // Current booking information
+        let currentBooking = {
+            event: null,
+            date: null,
+            time: null,
+            seats: [],
+            ticketCount: 1,
+            paymentMethod: null,
+            upiApp: null,
+            promoCode: null
+        };
+
+        // DOM elements
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const categorySections = document.querySelectorAll('.category-section');
+        const bookingModal = document.getElementById('bookingModal');
+        const paymentModal = document.getElementById('paymentModal');
+        const receiptModal = document.getElementById('receiptModal');
+        const closeBtns = document.querySelectorAll('.close');
+        const toast = document.getElementById('toast');
+        const feedbackForm = document.getElementById('feedbackForm');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate event grids
+            populateEventGrid('movies', events.movies);
+            populateEventGrid('concerts', events.concerts);
+            populateEventGrid('sports', events.sports);
+            populateEventGrid('theater', events.theater);
+           
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('showDate').min = today;
+            document.getElementById('showDate').value = today;
+           
+            // Generate initial seats
+            generateSeats();
+           
+            // Add event listeners
+            setupEventListeners();
+        });
+
+        // Populate event grid with cards
+        function populateEventGrid(category, events) {
+            const grid = document.getElementById(`${category}-grid`);
+            grid.innerHTML = '';
+           
+            events.forEach(event => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+                eventCard.innerHTML = `
+                    <img src="${event.poster}" alt="${event.title}" class="event-poster">
+                    <div class="event-type">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                    <div class="event-info">
+                        <h3 class="event-title">${event.title}</h3>
+                        <div class="event-meta">
+                            <span>${event.genre}</span>
+                            <span>${event.duration}</span>
+                        </div>
+                        <div class="event-meta">
+                            <span>⭐ ${event.rating}/5</span>
+                            <span>₹${event.price}</span>
+                        </div>
+                        <button class="btn book-btn" data-id="${event.id}" data-category="${category}">Book Now</button>
+                    </div>
+                `;
+                grid.appendChild(eventCard);
+            });
+        }
+
+        // Generate seats for booking
+        function generateSeats() {
+            const seatsContainer = document.getElementById('seatsContainer');
+            seatsContainer.innerHTML = '';
+           
+            // Add row labels
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+           
+            for (let row = 0; row < rows.length; row++) {
+                for (let seatNum = 1; seatNum <= 10; seatNum++) {
+                    const seat = document.createElement('div');
+                    seat.className = 'seat';
+                    seat.textContent = `${rows[row]}${seatNum}`;
+                   
+                    // Randomly mark some seats as occupied or VIP
+                    const random = Math.random();
+                    if (random > 0.85) {
+                        seat.classList.add('occupied');
+                    } else if (random > 0.7) {
+                        seat.classList.add('vip');
+                    } else {
+                        seat.addEventListener('click', toggleSeatSelection);
+                    }
+                   
+                    seatsContainer.appendChild(seat);
+                }
+            }
+        }
+
+        // Toggle seat selection
+        function toggleSeatSelection() {
+            const ticketCount = parseInt(document.getElementById('ticketCount').value);
+            const selectedSeats = document.querySelectorAll('.seat.selected');
+           
+            if (this.classList.contains('selected')) {
+                this.classList.remove('selected');
+                updateBookingSummary();
+                return;
+            }
+           
+            if (selectedSeats.length >= ticketCount) {
+                alert(`You can only select ${ticketCount} seats.`);
+                return;
+            }
+           
+            this.classList.add('selected');
+            updateBookingSummary();
+        }
+
+        // Update booking summary
+        function updateBookingSummary() {
+            const selectedSeats = document.querySelectorAll('.seat.selected');
+            const ticketCount = parseInt(document.getElementById('ticketCount').value);
+            const eventPrice = currentBooking.event ? currentBooking.event.price : 200;
+           
+            // Calculate ticket price
+            let ticketPrice = eventPrice * selectedSeats.length;
+           
+            // Apply VIP pricing
+            selectedSeats.forEach(seat => {
+                if (seat.classList.contains('vip')) {
+                    ticketPrice += 100; // VIP upgrade fee
+                }
+            });
+           
+            // Apply promo code discount
+            if (currentBooking.promoCode === 'WELCOME25') {
+                ticketPrice *= 0.75; // 25% discount
+            } else if (currentBooking.promoCode === 'GROUP15' && selectedSeats.length >= 4) {
+                ticketPrice *= 0.85; // 15% discount
+            } else if (currentBooking.promoCode === 'APP10') {
+                ticketPrice *= 0.90; // 10% discount
+            }
+           
+            const serviceFee = 35.00;
+            const totalPrice = ticketPrice + serviceFee;
+           
+            document.getElementById('ticketPrice').textContent = `₹${ticketPrice.toFixed(2)}`;
+            document.getElementById('totalPrice').textContent = `₹${totalPrice.toFixed(2)}`;
+           
+            // Update current booking
+            currentBooking.seats = Array.from(selectedSeats).map(seat => seat.textContent);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Mobile menu toggle
+            mobileMenu.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+           
+            // Category navigation
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const category = btn.getAttribute('data-category');
+                   
+                    // Update active button
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                   
+                    // Show corresponding section
+                    categorySections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(`${category}-section`).classList.add('active');
+                });
+            });
+           
+            // Category links in nav
+            document.querySelectorAll('.category-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const category = link.getAttribute('data-category');
+                   
+                    // Update active button
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    document.querySelector(`.category-btn[data-category="${category}"]`).classList.add('active');
+                   
+                    // Show corresponding section
+                    categorySections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(`${category}-section`).classList.add('active');
+                   
+                    // Close mobile menu if open
+                    navLinks.classList.remove('active');
+                });
+            });
+           
+            // Book buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('book-btn')) {
+                    const eventId = e.target.getAttribute('data-id');
+                    const category = e.target.getAttribute('data-category');
+                    const event = events[category].find(e => e.id == eventId);
+                   
+                    currentBooking.event = event;
+                    document.getElementById('eventTitle').value = event.title;
+                   
+                    // Reset seats and update summary
+                    document.querySelectorAll('.seat.selected').forEach(seat => {
+                        seat.classList.remove('selected');
+                    });
+                    updateBookingSummary();
+                   
+                    bookingModal.style.display = 'block';
+                }
+            });
+           
+            // Close modals
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    bookingModal.style.display = 'none';
+                    paymentModal.style.display = 'none';
+                    receiptModal.style.display = 'none';
+                });
+            });
+           
+            window.addEventListener('click', (e) => {
+                if (e.target === bookingModal) {
+                    bookingModal.style.display = 'none';
+                }
+                if (e.target === paymentModal) {
+                    paymentModal.style.display = 'none';
+                }
+                if (e.target === receiptModal) {
+                    receiptModal.style.display = 'none';
+                }
+            });
+           
+            // Close receipt button
+            document.getElementById('closeReceipt').addEventListener('click', () => {
+                receiptModal.style.display = 'none';
+            });
+           
+            // Ticket count change
+            document.getElementById('ticketCount').addEventListener('change', function() {
+                const maxSeats = parseInt(this.value);
+                const selectedSeats = document.querySelectorAll('.seat.selected');
+               
+                if (selectedSeats.length > maxSeats) {
+                    alert(`You can only select ${maxSeats} seats.`);
+                    // Deselect extra seats
+                    for (let i = maxSeats; i < selectedSeats.length; i++) {
+                        selectedSeats[i].classList.remove('selected');
+                    }
+                }
+               
+                currentBooking.ticketCount = maxSeats;
+                updateBookingSummary();
+            });
+           
+            // Payment method selection
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', () => {
+                    document.querySelectorAll('.payment-method').forEach(m => {
+                        m.classList.remove('selected');
+                    });
+                    method.classList.add('selected');
+                    currentBooking.paymentMethod = method.getAttribute('data-method');
+                   
+                    // Show UPI options if UPI selected
+                    const upiOptions = document.getElementById('upiOptions');
+                    if (currentBooking.paymentMethod === 'upi') {
+                        upiOptions.classList.add('active');
+                    } else {
+                        upiOptions.classList.remove('active');
+                        currentBooking.upiApp = null;
+                    }
+                });
+            });
+           
+            // UPI app selection
+            document.querySelectorAll('.upi-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.upi-option').forEach(o => {
+                        o.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+                    currentBooking.upiApp = option.getAttribute('data-upi');
+                });
+            });
+           
+            // Promo code application
+            document.getElementById('promoCode').addEventListener('change', function() {
+                currentBooking.promoCode = this.value.toUpperCase();
+                updateBookingSummary();
+            });
+           
+            // Confirm booking button
+            document.getElementById('confirmBooking').addEventListener('click', () => {
+                if (currentBooking.seats.length === 0) {
+                    alert('Please select at least one seat.');
+                    return;
+                }
+               
+                if (!currentBooking.paymentMethod) {
+                    alert('Please select a payment method.');
+                    return;
+                }
+               
+                if (currentBooking.paymentMethod === 'upi' && !currentBooking.upiApp) {
+                    alert('Please select a UPI app.');
+                    return;
+                }
+               
+                // Set payment details
+                document.getElementById('paymentEvent').textContent = currentBooking.event.title;
+                document.getElementById('paymentDateTime').textContent =
+                    `${document.getElementById('showDate').value} ${document.getElementById('showtime').value}`;
+                document.getElementById('paymentSeats').textContent = currentBooking.seats.join(', ');
+                document.getElementById('paymentTotal').textContent = document.getElementById('totalPrice').textContent;
+               
+                // Show appropriate payment form
+                const paymentDetails = document.getElementById('paymentDetails');
+                if (currentBooking.paymentMethod === 'upi') {
+                    paymentDetails.innerHTML = `
+                        <div class="form-group">
+                            <label>UPI Payment</label>
+                            <p>Open your ${currentBooking.upiApp === 'phonepe' ? 'PhonePe' :
+                                          currentBooking.upiApp === 'gpay' ? 'Google Pay' :
+                                          currentBooking.upiApp === 'paytm' ? 'Paytm' : 'UPI'} app to complete payment</p>
+                            <div style="text-align: center; margin: 20px 0;">
+                                <div style="background: white; padding: 20px; display: inline-block; border-radius: 8px;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=cinebook@axisbank&pn=CineBook&am=${document.getElementById('totalPrice').textContent.replace('₹', '')}&cu=INR" alt="QR Code">
+                                </div>
+                            </div>
+                            <p style="text-align: center;">Or enter UPI ID: <strong>cinebook@axisbank</strong></p>
+                        </div>
+                    `;
+                } else if (currentBooking.paymentMethod === 'credit' || currentBooking.paymentMethod === 'debit') {
+                    paymentDetails.innerHTML = `
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiryDate">Expiry Date</label>
+                                <input type="text" id="expiryDate" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" placeholder="123">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Name on Card</label>
+                            <input type="text" id="cardName" placeholder="John Doe">
+                        </div>
+                    `;
+                } else {
+                    paymentDetails.innerHTML = `
+                        <div class="form-group">
+                            <label for="walletNumber">Wallet Number</label>
+                            <input type="text" id="walletNumber" placeholder="Enter your wallet number">
+                        </div>
+                        <div class="form-group">
+                            <label for="walletPin">Wallet PIN</label>
+                            <input type="password" id="walletPin" placeholder="Enter your PIN">
+                        </div>
+                    `;
+                }
+               
+                bookingModal.style.display = 'none';
+                paymentModal.style.display = 'block';
+            });
+           
+            // Complete payment button
+            document.getElementById('completePayment').addEventListener('click', () => {
+                // Validate payment form based on method
+                let isValid = true;
+               
+                if (currentBooking.paymentMethod === 'credit' || currentBooking.paymentMethod === 'debit') {
+                    const cardNumber = document.getElementById('cardNumber').value;
+                    const expiryDate = document.getElementById('expiryDate').value;
+                    const cvv = document.getElementById('cvv').value;
+                    const cardName = document.getElementById('cardName').value;
+                   
+                    if (!cardNumber || !expiryDate || !cvv || !cardName) {
+                        alert('Please fill in all payment details.');
+                        isValid = false;
+                    }
+                } else if (currentBooking.paymentMethod === 'wallet') {
+                    const walletNumber = document.getElementById('walletNumber').value;
+                    const walletPin = document.getElementById('walletPin').value;
+                   
+                    if (!walletNumber || !walletPin) {
+                        alert('Please fill in all payment details.');
+                        isValid = false;
+                    }
+                }
+               
+                if (!isValid) return;
+               
+                // Simulate payment processing
+                setTimeout(() => {
+                    paymentModal.style.display = 'none';
+                    showReceipt();
+                }, 1500);
+            });
+           
+            // Feedback form submission
+            feedbackForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+               
+                const userName = document.getElementById('userName').value;
+                const userEmail = document.getElementById('userEmail').value;
+                const rating = document.querySelector('input[name="rating"]:checked');
+                const feedbackMessage = document.getElementById('feedbackMessage').value;
+               
+                if (!userName || !userEmail || !rating) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+               
+                // Simulate feedback submission
+                setTimeout(() => {
+                    showToast('Thank you for your feedback!');
+                    feedbackForm.reset();
+                   
+                    // Reset stars
+                    document.querySelectorAll('input[name="rating"]').forEach(star => {
+                        star.checked = false;
+                    });
+                }, 1000);
+            });
+        }
+
+        // Show receipt after successful payment
+        function showReceipt() {
+            // Generate random booking ID
+            const bookingId = 'CB' + Math.floor(100000 + Math.random() * 900000);
+           
+            // Set receipt details
+            document.getElementById('receiptBookingId').textContent = bookingId;
+            document.getElementById('receiptEvent').textContent = currentBooking.event.title;
+            document.getElementById('receiptDateTime').textContent =
+                `${document.getElementById('showDate').value} ${document.getElementById('showtime').value}`;
+            document.getElementById('receiptSeats').textContent = currentBooking.seats.join(', ');
+            document.getElementById('receiptTicketPrice').textContent = document.getElementById('ticketPrice').textContent;
+            document.getElementById('receiptTotal').textContent = document.getElementById('totalPrice').textContent;
+           
+            // Show receipt modal
+            receiptModal.style.display = 'block';
+           
+            // Show success message
+            showToast(`Booking confirmed for ${currentBooking.event.title}!`);
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Reset booking form
+        function resetBookingForm() {
+            currentBooking = {
+                event: null,
+                date: null,
+                time: null,
+                seats: [],
+                ticketCount: 1,
+                paymentMethod: null,
+                upiApp: null,
+                promoCode: null
+            };
+           
+            document.getElementById('ticketCount').value = 1;
+            document.getElementById('promoCode').value = '';
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('selected');
+            });
+            document.querySelectorAll('.upi-option').forEach(o => {
+                o.classList.remove('selected');
+            });
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+            });
+            document.getElementById('upiOptions').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
+
